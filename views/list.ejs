@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/main.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+
+   
+<body class="grey-bg">
+    <!-- 재사용이 많은 ui 같은 경우 따로 ejs파일로 만들고 밑에 방식으로 간단하게 추가함. -->
+    <%- include('nav.ejs') %>
+    <!-- <%= JSON.stringify(posts) %> -->
+    <div class="white-bg">
+      <% for(let i =0; i< posts.length ;i++){ %>
+        <div class="list-box">
+          <h4>
+            <a href="/detail/<%= posts[i]._id %>">
+              <%= posts[i].title %>
+            </a>
+            <a href="/edit/<%= posts[i]._id %>">✏️</a>
+            <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
+          </h4>
+          <p><%= posts[i].content %></p>
+        </div>
+      <% } %>
+      <a href="/list/next/<%= posts[posts.length-1]._id %>">다음</a>
+
+    </div> 
+    <script>
+      var i;
+      var totalDelete = document.querySelectorAll('.delete').length;
+      for( i = 0;i < totalDelete  ; i++){
+        document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
+          console.log(e.target.dataset.id) 
+          fetch('/delete?docid=' + e.target.dataset.id, {
+            method : 'DELETE',
+            })
+          .then((r)=> r.text()) 
+            // 서버가 보내는게 문자일 경우 r.text, array나 오브젝트 보내는 경우는 r.json적으면 됨.
+          .then((r)=> {
+            e.target.parentElement.parentElement.style.display ="none" 
+        })
+      }
+    )}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
+</html>
